@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-08-23T18:00:04.325Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.203" etag="uygMpn6KaiDdWWewrz1H" version="21.6.8" type="github">
+<mxfile host="app.diagrams.net" modified="2023-08-23T18:02:48.881Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.203" etag="QIuvFNzKETR9tl-5DQj8" version="21.6.8" type="github">
   <diagram name="Página-1" id="bcR1xl-ATKyn7uxblzfL">
     <mxGraphModel dx="1152" dy="717" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -95,7 +95,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="erYnmfh7KymrD9iURdZM-212" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="erYnmfh7KymrD9iURdZM-40">
+        <mxCell id="erYnmfh7KymrD9iURdZM-212" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="erYnmfh7KymrD9iURdZM-40">
           <mxGeometry x="82.5" y="91" width="102" height="90" as="geometry" />
         </mxCell>
         <mxCell id="erYnmfh7KymrD9iURdZM-213" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="erYnmfh7KymrD9iURdZM-40" source="erYnmfh7KymrD9iURdZM-214" target="erYnmfh7KymrD9iURdZM-190">
@@ -248,7 +248,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="erYnmfh7KymrD9iURdZM-130" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="erYnmfh7KymrD9iURdZM-1">
+        <mxCell id="erYnmfh7KymrD9iURdZM-130" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="erYnmfh7KymrD9iURdZM-1">
           <mxGeometry x="76.5" y="90" width="102" height="90" as="geometry" />
         </mxCell>
         <mxCell id="erYnmfh7KymrD9iURdZM-146" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="erYnmfh7KymrD9iURdZM-1" source="erYnmfh7KymrD9iURdZM-131" target="erYnmfh7KymrD9iURdZM-54">
@@ -381,7 +381,7 @@
             <mxPoint y="-1" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="erYnmfh7KymrD9iURdZM-237" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="erYnmfh7KymrD9iURdZM-28">
+        <mxCell id="erYnmfh7KymrD9iURdZM-237" value="Bumped into someone?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="erYnmfh7KymrD9iURdZM-28">
           <mxGeometry x="81" y="90" width="102" height="90" as="geometry" />
         </mxCell>
         <mxCell id="erYnmfh7KymrD9iURdZM-238" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="erYnmfh7KymrD9iURdZM-28" source="erYnmfh7KymrD9iURdZM-217" target="erYnmfh7KymrD9iURdZM-237">
