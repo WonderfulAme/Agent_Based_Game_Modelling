@@ -59,6 +59,53 @@ The spatial resolutions of the model will be 40 x 15, and temporal ones will be 
 
 ![Action Diagram](/ActionDiagram1stGame.png)
 
+## Second Game
+
+### General Description
+
+A group of individuals is gathered within an open area. Each individual is assigned a number ranging from one to three, with their assigned numbers kept secret from others. The objective is to form groups with individuals who share the same number. To achieve this objective, two behaviors could be observed: some approached other individuals to compare their numbers, while others waited for the groups to form and only look at which one has the same number. The difference with the first game was that no verbal communication was allowed.
+
+### Purpose
+
+This model primarily aims to describe the dynamics of group formation in scenarios where agents cannot use verbal speech. This will allow the user to understand how distinct groups form with these limitations and compare it with the previous game, where there were no prohibitions.
+
+### Entities, state variables and scales
+
+Our entities will be agents and groups as described in the game above. The patches will only serve as a positioning system. State variables are listed in the following tables.
+
+**Agent Attributes**
+
+| Variable name | Type      | Description                                          | Possible Values |
+|---------------|-----------|------------------------------------------------------|-----------------|
+| ID            | Constant  | Identifies the agent in the whole population       | 0 to number of turtles |
+| x-coordinate  | Variable  | Defines the position of the agent relative to the x-axis | [-40, 40] |
+| y-coordinate  | Variable  | Defines the position of the agent relative to the y-axis | [-15, 15] |
+| Heading       | Variable  | Direction the agent is facing                         | [0, 360] degrees |
+| Random attribute | Constant | A random attribute separating agents into three groups such as color or number | Green, Orange, Brown |
+| Personality   | Constant  | Type of personality affecting interactions          | Leader, Follower |
+| In-group      | Variable  | Boolean variable indicating if agent is in a group   | Boolean |
+| Size          | Constant  | Physical size of the agent                            | 3 |
+| Shape         | Constant  | Shape of the agent                                   | turtle |
+
+As we saw in the first game, the individuals will have a personality (special attribute), only two types given the new constraints:
+- Leader: An agent who takes the initiative to communicate with other individuals
+- Follower: An agent that only waits to be approached or groups to form to group.
+
+**Group Attributes**
+
+| Variable name | Type     | Description                                     | Possible Values |
+|---------------|----------|-------------------------------------------------|-----------------|
+| Agent set     | Variable | Group of agents with the same random attribute | - |
+| Random attribute (ID) | Constant | A random attribute characterizing the group | Green, Orange, Brown |
+| Leader        | Variable | An agent that will determine where the group moves | - |
+
+The spatial and temporal resolutions of the model will be the same as in the first game.
+
+### Process overview and scheduling
+
+![Action Diagram](/ActionDiagram2ndGame.png)
+
+
 ## Third Game
 
 ### General Description
