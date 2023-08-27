@@ -2,9 +2,9 @@
 ## Agent Based Modelling and Simulation
 
 Amelia Hoyos and Aura Carolina Serna  
-*25 August, 2023*
 
-Four distinct games were conducted within the classroom, each characterized by unique rules. The intention behind these games was to generate an understanding of agent-based modeling and simulation. Subsequently, the games were to be described with the ODD procedure and then modeled.
+
+Four distinct games were conducted, each characterized by unique rules. The intention behind these games was to generate an understanding of agent-based modeling and simulation. Subsequently, the games were to be described with the ODD procedure and then modeled.
 
 The initial three games share a lot of similarities, particularly Design Concepts, Initialization, Input Data, and certain submodels. These aspects are presented in general at the end of the descriptions for the three games, with specific differences given for each individual game.
 
