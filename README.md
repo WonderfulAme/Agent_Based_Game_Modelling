@@ -8,63 +8,6 @@ Four distinct games were conducted within the classroom, each characterized by u
 
 The initial three games share a lot of similarities, particularly Design Concepts, Initialization, Input Data, and certain submodels. These aspects are presented in general at the end of the descriptions for the three games, with specific differences given for each individual game.
 
-\section {First Game}
-\subsection{General Description}
-A group of individuals gathers within an open area. Each individual is assigned a number ranging from one to three, with their assigned numbers kept secret from others. The objective is to form groups with individuals who share the same number. Different approaches are taken to achieve this goal: some openly announce their group affiliation, while others hop between people until they find a match. Some remain stationary until distinct groups emerge and subsequently seek out their respective groups. As a result, three distinct groups are eventually formed by the end of the activity.
-\subsection{Purpose}
-The primary goal of this model is to provide a descriptive framework for understanding the dynamics of group formation in scenarios where agents are able to communicate over long distances. It aims to explain how individual behaviours affect interaction patterns and ultimately the organization of agents into distinct groups.
-\subsection{Entities, state variables and scales}
-Our entities will be composed of individual agents and agent collectives (already formed groups) that will behave differently. Patches will be used only for positioning. 
-
-\noindent State variables are listed on the following tables.
-
-\begin{center}
-\begin{tabularx}{\textwidth}{p{3.4cm}p{1.5cm}p{3.5cm}p{3cm}X}
-    \toprule
-    \textbf{Variable name} & \textbf{Type} &\textbf{Description} & \textbf{Possible Values} & \textbf{Units} \\
-    \midrule
-    ID & Constant & Identifies the agent in the whole population & 0 to number of turtles & - \\
-    x-coordinate & Variable & Defines the position of the agent relative to the x-axis & [-40, 40] & - \\
-    y-coordinate & Variable & Defines the position of the agent relative to the y-axis & [-15, 15] & - \\
-    Heading & Variable & Direction the agent is facing & [0, 360] & degrees \\
-    Random attribute & Constant & A random attribute separating agents into three groups such as color or number & Green, Orange, Brown & - \\
-    Personality & Constant & Type of personality affecting interactions & Leader, Participant, Follower & - \\
-    In-group & Variable & Boolean variable indicating if agent is in a group & Boolean & - \\
-    Size & Constant & Physical size of the agent & 3 & - \\
-    Shape & Constant & Shape of the agent & turtle & - \\
-    \bottomrule
-\end{tabularx}
-\captionof*{table}{Agent Attributes}
-\end{center}
-
-\noindent In the real games, the groups where divided according to some number between 1 and 3. Nonetheless, in the simulation we will use color as the random attribute, as it will allow the user to distinguish between groups easily. Personality is a special attribute that will determine individual behaviour. Each personality is described below.
-\begin{itemize}
-    \item Leader: An agent that communicates with the group regardless of distance from other members. It communicates using long range messages.
-    \item Participant: An agent that communicates with other agents only when they are close. The agent approaches the closest agents and questions them.
-    \item Follower: An agent that doesn’t actively participate, but waits until somebody questions him to take action or until specific groups are formed.
-\end{itemize}
-
-
-\begin{center}
-\begin{tabularx}{\textwidth}{p{3.4cm}p{1.5cm}Xp{1.5cm}}
-    \toprule
-    \textbf{Variable name} & \textbf{Type} &\textbf{Description} & \textbf{Possible Values}\\
-    \midrule
-    Agent set & Variable & Group of agents with the same random attribute & - \\
-    Random attribute (Identification)  & Constant & A random attribute characterizing the group & Green, Orange, Brown\\
-    Leader & Variable & An agent that will determine where the group moves & - \\
-
-    \bottomrule
-\end{tabularx}
-\captionof*{table}{Group Attributes}
-\end{center}
-
-\noindent The spatial resolutions of the model will be 40 x 15 and temporal ones will be until the objective is completed or until one hour has passed. The model will use discrete steps. 
-
-\subsection{Process overview and scheduling}
-\begin{center}
-\includegraphics[scale=0.35]{ActionDiagram1stGame.png}
-\end{center}
 
 ## First Game
 
@@ -114,7 +57,7 @@ The spatial resolutions of the model will be 40 x 15, and temporal ones will be 
 
 ### Process overview and scheduling
 
-![Action Diagram](path-to-image/ActionDiagram1stGame.png)
+![Action Diagram](/ActionDiagram1stGame.png)
 
 ## Third Game
 
@@ -156,7 +99,7 @@ The spatial and temporal resolutions of the model will be the same as in the fir
 
 ### Process overview and scheduling
 
-![Action Diagram](path-to-image/ActionDiagram3rdGame.png)
+![Action Diagram](/ActionDiagram3rdGame.png)
 
 ## General Concepts for First Three Games
 
@@ -266,7 +209,7 @@ N refers to the number of agents in the agent set. The spatial and temporal reso
 
 ### Process overview and scheduling
 
-![Action Diagram](path-to-image/ActionDiagram4thGame.png)
+![Action Diagram](/ActionDiagram4thGame.png)
 
 ### Design Concepts
 
