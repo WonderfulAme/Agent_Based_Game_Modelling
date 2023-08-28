@@ -57,7 +57,7 @@ The spatial resolutions of the model will be 40 x 15, and temporal ones will be 
 
 ### Process overview and scheduling
 
-![Action Diagram](/assets/ActionDiagram1stGame.png)
+![Action Diagram](assets\ActionDiagram1stGame.png)
 
 ## Second Game
 
@@ -103,7 +103,7 @@ The spatial and temporal resolutions of the model will be the same as in the fir
 
 ### Process overview and scheduling
 
-![Action Diagram](/assets/ActionDiagram2ndGame.png)
+![Action Diagram](assets\ActionDiagram2ndGame.png)
 
 
 ## Third Game
@@ -146,7 +146,7 @@ The spatial and temporal resolutions of the model will be the same as in the fir
 
 ### Process overview and scheduling
 
-![Action Diagram](/assets/ActionDiagram3rdGame.png)
+![Action Diagram](assets\ActionDiagram3rdGame.png)
 
 ## General Concepts for First Three Games
 
@@ -256,7 +256,7 @@ N refers to the number of agents in the agent set. The spatial and temporal reso
 
 ### Process overview and scheduling
 
-![Action Diagram](/assets/ActionDiagram4thGame.png)
+![Action Diagram](assets\ActionDiagram4thGame.png)
 
 ### Design Concepts
 
