@@ -172,13 +172,13 @@ to show-groups
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-449
-10
-910
-472
+412
+84
+1230
+403
 -1
 -1
-7.43
+10.0
 1
 10
 1
@@ -188,10 +188,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--30
-30
--30
-30
+-40
+40
+-15
+15
 1
 1
 1
@@ -258,7 +258,7 @@ number-of-tortoises
 number-of-tortoises
 0
 50
-50.0
+27.0
 1
 1
 NIL
@@ -298,10 +298,10 @@ show-groups?
 -1000
 
 PLOT
-110
-304
-371
-470
+101
+302
+362
+468
 Number of tortoises in each group
 NIL
 NIL
