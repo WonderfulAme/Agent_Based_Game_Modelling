@@ -1,53 +1,223 @@
-turtles-own [ personality ]
+breed [tortoises tortoise]
+; Breed definition for individual agents that move and form groups
+
+tortoises-own [group-id time-of-joining personality]
+; Specific attributes owned by each tortoise: group membership ID and the time it joined a group
+
+breed [groups group]
+; Breed definition for collective agent representing groups
+
+groups-own [tortoises-group num-agents id group-color time-created]
+; Attributes owned by each group:
+; - tortoises-group: collection of tortoises belonging to the group
+; - num-agents: number of tortoises in the group
+; - id: ID of the group (matching the group-id of the individual tortoises)
+; - group-color: color associated with the group
+; - time-created: time when the group was formed by a pair of tortoises
+
+globals [next-group-id new-groups tortoises-to-add-to-group]
+; Global variables:
+; - next-group-id: represents the next available group ID to be assigned
+; - new-groups: a list that stores groups created when tortoises meet and form a new group
+; - tortoises-to-add-to-group: a list of tortoises that need to be added to an existing group
+
 
 to setup
   clear-all
   reset-ticks
-  create-turtles number-of-turtles [
+
+  set next-group-id 0
+  set new-groups []
+  set tortoises-to-add-to-group []
+
+  ; Initialize global variables
+  ; - next-group-id: Initialize the next available group ID to 0
+  ; - new-groups: Initialize an empty list to store groups created during the simulation
+  ; - tortoises-to-add-to-group: Initialize an empty list to track tortoises to be added to groups
+
+  ; Initial tortoise setup
+  create-tortoises number-of-tortoises [
     set shape "turtle"
     set size 3
-    set color one-of [53 34 21] ;; 53 = verde (primer grupo), 34 = cafe (segundo grupo), 21 = naranja oscuro (tercer grupo)
-    setxy random-xcor random-ycor
+    set color one-of [53 34 21] ; Assign a random color from the given options
     set personality personality-giver
+    setxy random-xcor random-ycor ; Random initial position
+    set time-of-joining 0
+    set group-id -1
   ]
-  ask patches [ set pcolor blue - random 2]
-  ask turtles
-  [ ask patches in-radius 3
-      [ set pcolor red ] ]
+
+  ; Set the color of patches
+  ask patches [set pcolor 100 + random 2]
 end
 
 to go
+  ; Iterate through all tortoises
+  ask tortoises [
+    if group-id = -1 [
+      move-tortoise ; If the tortoise is not in a group, move it
+      form-groups   ; Form groups with nearby tortoises if they meet
+    ]
+  ]
 
-  ask turtles [ move ]
-  tick
+  new-group        ; Create new groups formed in this tick with the new-groups list
+  update-groups    ; Update existing groups with new members with the tortoises-to-add-to-group:
+  show-groups      ; Show/hide group representations based on switch
+  show-id          ; Show group IDs based on switch
 
+
+  ; Check if all tortoises have joined groups
+  ifelse all? tortoises [group-id != -1] [
+    stop ; If all tortoises are in groups, stop the simulation
+    export-plot "Number of tortoises in each group" "output.csv" ; To have data to analyse the simulation
+  ] [
+    tick ; If not, increment the tick counter and continue
+  ]
 end
 
-to move
-
-
+to move-tortoise
+  ifelse (personality = "leader")
+  [move-leader]
+  [move-follower]
 end
+
+to move-leader
+  let target min-one-of other tortoises in-cone 15 120 [distance myself]
+  ifelse target != nobody [
+    face target
+    forward 1
+    ifelse ([breed] of target = "groups")[
+    if (color != [group-color] of target) and (distance target <= 7) [
+        set heading heading + 45 + random 125]
+    ]
+    [if (color != [color] of target) and (distance target <= 7) [
+      set heading heading + 45 + random 125]
+    ]
+  ] [
+    set heading heading + random 5
+    forward 1
+  ]
+end
+
+to move-follower
+  let target min-one-of other groups in-cone 20 120 [distance myself]
+  ifelse target != nobody [
+    face target
+    forward 1
+    if (color != [group-color] of target) and (distance target <= 7) [
+      set heading heading + 45 + random 125
+      forward 1
+    ]
+  ] [
+    set heading heading + random 5
+    forward 0.3
+  ]
+end
+
+
+to form-groups
+  ; Find other tortoises within a radius of 2 with the same color
+  let others other tortoises in-radius 3 with [color = [color] of myself]
+
+  if any? others [
+
+    ; If there are other tortoises nearby
+    ifelse any? others with [group-id != -1] [
+      ; If any nearby tortoise is already in a group, join one
+      let old-members one-of others with [group-id != -1]
+      set group-id [group-id] of old-members
+      set time-of-joining ticks
+      set tortoises-to-add-to-group lput self tortoises-to-add-to-group
+    ] [
+
+      ; If no nearby tortoises are in a group, create one
+      let this-group (turtle-set self others)
+      set new-groups lput this-group new-groups
+
+      ; Assign a new group ID to this group and others in the group
+      set group-id next-group-id
+      ask others [set group-id next-group-id]
+
+      ; Record the time of joining for the group and its members
+      set time-of-joining ticks
+      ask others [set time-of-joining ticks]
+
+      set next-group-id next-group-id + 1
+    ]
+  ]
+end
+
+
+to new-group
+  ; Iterate through each new group
+  foreach new-groups [
+    [element] ->
+    create-groups 1 [
+      set tortoises-group element   ; Assign the collection of tortoises to the group
+      set num-agents count tortoises-group  ; Count the number of tortoises in the group
+      set id [group-id] of one-of tortoises-group   ; Set the group ID to match one tortoise's ID
+      set group-color [color] of one-of tortoises-group   ; Set the group color based on a tortoise's color
+      set time-created ticks   ; Record the time when the group was created
+      let reference-tortoise one-of tortoises-group   ; Choose a reference tortoise in the group
+      set xcor [xcor] of reference-tortoise   ; Set the group's x-coordinate to the reference tortoise's x-coordinate
+      set ycor [ycor] of reference-tortoise   ; Set the group's y-coordinate to the reference tortoise's y-coordinate
+      set shape "dot"   ; Set the shape of the group agent to a dot
+    ]
+  ]
+  set new-groups []   ; Clear the list of new groups
+end
+
+to update-groups
+  ; Iterate through each tortoise to be added to a group
+  foreach tortoises-to-add-to-group [
+    [element] ->
+    let element-id [group-id] of element   ; Get the group ID of the tortoise
+    ask groups with [id = element-id] [
+      set tortoises-group (turtle-set element tortoises-group)   ; Add the tortoise to the group
+      set num-agents count tortoises-group   ; Update the number of tortoises in the group
+    ]
+  ]
+  set new-groups []   ; Clear the list of new groups
+end
+
 
 to-report personality-giver
   let k random-float 1
   let value ""
-  ifelse (k < 0.1)
+  ifelse (k < probability-of-generating-leader)
   [set value "leader"]
-  [ifelse (k < 0.6)
-    [set value "folower"]
-    [set value "static"]
-  ]
+  [set value "follower"]
   report value
+end
+
+
+to show-id
+  ask groups [
+    ifelse show-group-id? [
+      set label id
+    ] [
+      set label ""
+    ]
+  ]
+end
+
+to show-groups
+  ask groups [
+    ifelse show-groups? [
+      set size 3
+    ] [
+      set size 0
+    ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-225
-10
-683
-469
+412
+84
+1230
+403
 -1
 -1
-7.38
+10.0
 1
 10
 1
@@ -57,21 +227,21 @@ GRAPHICS-WINDOW
 1
 1
 1
--30
-30
--30
-30
-0
-0
+-40
+40
+-15
+15
+1
+1
 1
 ticks
 30.0
 
 BUTTON
-50
-29
-113
-62
+25
+23
+95
+59
 NIL
 setup
 NIL
@@ -85,10 +255,27 @@ NIL
 1
 
 BUTTON
-52
-84
-115
-117
+107
+23
+175
+59
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+185
+23
+255
+59
 step
 go
 NIL
@@ -101,37 +288,108 @@ NIL
 NIL
 1
 
-BUTTON
-51
-141
-114
-174
-go
-go
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
-14
-198
-186
-231
-number-of-turtles
-number-of-turtles
+26
+73
+309
+106
+number-of-tortoises
+number-of-tortoises
 0
 50
-50.0
+25.0
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+25
+229
+112
+274
+NIL
+count groups
+17
+1
+11
+
+SWITCH
+178
+180
+320
+213
+show-group-id?
+show-group-id?
+0
+1
+-1000
+
+SWITCH
+27
+179
+161
+212
+show-groups?
+show-groups?
+0
+1
+-1000
+
+PLOT
+25
+301
+286
+467
+Number of tortoises in each group
+NIL
+NIL
+0.0
+20.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen-0" 1.0 1 -13791810 true "" "histogram [group-id] of tortoises"
+
+SLIDER
+24
+122
+265
+155
+probability-of-generating-leader
+probability-of-generating-leader
+0
+1
+0.5
+0.1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+178
+228
+244
+273
+leaders
+count tortoises with [personality = \"leader\"]
+17
+1
+11
+
+MONITOR
+255
+227
+320
+272
+followers
+count tortoises with [personality = \"follower\"]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

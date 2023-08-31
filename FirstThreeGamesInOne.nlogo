@@ -4,7 +4,7 @@ breed [tortoises tortoise]
 ; Define attributes specific to the "tortoises" breed
 tortoises-own [group-id           ; ID of the group the tortoise belongs to
                time-of-joining    ; The time when the tortoise joined its current group
-               personality        ; The role/personality of the tortoise (leader, participant, follower)
+               personality        ; The role/personality of the tortoise (leader, participant, follower depending on the game)
                in-group]          ; A boolean flag indicating whether the tortoise is in a group
 
 ; Define the breed "groups" to represent collective group agents
@@ -27,6 +27,10 @@ globals [next-group-id            ; The next available group ID to be assigned
 to setup
   clear-all          ; Clear world and agents
   reset-ticks        ; Reset tick counter
+
+  ; Adjust probabilities based on the game type
+  if (game != "Game 1") [set probability-of-generating-participant 0]
+  if (game = "Game 3") [set probability-of-generating-leader 0]
 
   ; Initialize global variables
   set next-group-id 0
@@ -76,14 +80,27 @@ end
 
 ; Procedure for tortoise movement
 to move-tortoise
+  ifelse (game = "Game 3") [
+    ; In Game 3, tortoises have random turns
+    ; Randomly choose between turning right or left
+    ifelse random-float 1.0 > 0.5 [
+      right random 15
+    ] [
+      left random 15
+    ]
+    forward 1             ; Move forward by 1 unit
+  ] [
+    ; In other games, movement depends on personality
     ifelse (personality = "follower") [
       move-follower       ; Execute follower movement routine
     ] [
       if (personality = "leader") [
-        call
+        ; In Game 1, leaders call nearby agents
+        if (game = "Game 1") [call]
         move-leader-participant   ; Execute leader or participant movement routine
       ]
     ]
+  ]
 end
 
 
@@ -102,7 +119,7 @@ to move-follower
   move-to-group
 end
 
-; Procedure for leader calling nearby tortoises
+; Procedure for leader calling nearby tortoises in Game 1
 to call
   ask other tortoises with [color = [color] of myself and not in-group][
     face myself forward 1
@@ -322,10 +339,10 @@ NIL
 1
 
 SLIDER
-24
-84
-307
-117
+26
+136
+309
+169
 number-of-tortoises
 number-of-tortoises
 0
@@ -337,10 +354,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-23
-325
-110
-370
+25
+377
+112
+422
 NIL
 count groups
 17
@@ -348,10 +365,10 @@ count groups
 11
 
 SWITCH
-178
-272
-320
-305
+180
+324
+322
+357
 show-group-id?
 show-group-id?
 1
@@ -359,10 +376,10 @@ show-group-id?
 -1000
 
 SWITCH
-27
-271
-161
-304
+29
+323
+163
+356
 show-groups?
 show-groups?
 0
@@ -370,10 +387,10 @@ show-groups?
 -1000
 
 PLOT
-23
-397
-284
-563
+25
+449
+286
+615
 Number of tortoises in each group
 NIL
 NIL
@@ -388,10 +405,10 @@ PENS
 "pen-0" 1.0 1 -13791810 true "" "histogram [group-id] of tortoises"
 
 SLIDER
-25
-127
-266
-160
+27
+179
+268
+212
 probability-of-generating-leader
 probability-of-generating-leader
 0
@@ -403,10 +420,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-176
-324
-242
-369
+178
+376
+244
+421
 leaders
 count tortoises with [personality = \"leader\"]
 17
@@ -414,10 +431,10 @@ count tortoises with [personality = \"leader\"]
 11
 
 MONITOR
-321
-324
-386
-369
+323
+376
+388
+421
 followers
 count tortoises with [personality = \"follower\"]
 17
@@ -425,10 +442,10 @@ count tortoises with [personality = \"follower\"]
 11
 
 SLIDER
-25
-173
-280
-206
+27
+225
+282
+258
 probability-of-generating-participant
 probability-of-generating-participant
 0
@@ -440,10 +457,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
-218
-198
-251
+28
+270
+200
+303
 vision-field
 vision-field
 0
@@ -455,15 +472,25 @@ NIL
 HORIZONTAL
 
 MONITOR
-247
-324
-317
-369
+249
+376
+319
+421
 participants
 count tortoises with [personality = \"participant\"]
 17
 1
 11
+
+CHOOSER
+27
+74
+165
+119
+game
+game
+"Game 1" "Game 2" "Game 3"
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

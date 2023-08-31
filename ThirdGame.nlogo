@@ -38,15 +38,12 @@ to setup
   ; Initial tortoise setup
   create-tortoises number-of-tortoises [
     set shape "turtle"
-    set size 3
+    set size 1.5
     set color one-of [53 34 21] ; Assign a random color from the given options
     setxy random-xcor random-ycor ; Random initial position
     set time-of-joining 0
     set group-id -1
   ]
-
-  ; Set the color of patches
-  ask patches [set pcolor 100 + random 2]
 end
 
 to go
@@ -87,7 +84,7 @@ end
 
 to form-groups
   ; Find other tortoises within a radius of 2 with the same color
-  let others other tortoises in-radius 2 with [color = [color] of myself]
+  let others other tortoises in-radius 1.5 with [color = [color] of myself]
 
   if any? others [
 

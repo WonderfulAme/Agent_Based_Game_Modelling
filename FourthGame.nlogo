@@ -243,8 +243,8 @@ SLIDER
 number-of-tortoises
 number-of-tortoises
 0
-40
-16.0
+100
+67.0
 1
 1
 NIL
