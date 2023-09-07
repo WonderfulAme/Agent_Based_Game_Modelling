@@ -1,3 +1,6 @@
+## To take into account
+Some of the features described below are not implemented, but are planned to be integrated into future models. This includes groups that have a leader in the first game and differentiating the participants from the followers.
+
 # Overview, Design concepts, Details: Game modelling
 ## Agent Based Modelling and Simulation
 
