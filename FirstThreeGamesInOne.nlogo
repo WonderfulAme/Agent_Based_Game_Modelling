@@ -371,7 +371,7 @@ SWITCH
 357
 show-group-id?
 show-group-id?
-1
+0
 1
 -1000
 

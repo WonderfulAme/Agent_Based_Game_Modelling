@@ -14,7 +14,7 @@ breed [groups group]
 groups-own [tortoises-group       ; A collection of tortoises belonging to the group
             num-agents           ; The number of tortoises in the group
             id                   ; ID of the group, matching the group-id of individual tortoises
-            group-color          ; The color associated with the group
+            group-color          ; The color associated with the turtles of the group
             time-created]        ; The time when the group was formed by a pair of tortoises
 
 ; Define global variables that apply to the entire simulation
@@ -51,9 +51,12 @@ end
 
 ; Main simulation loop
 to go
+  show-groups        ; Display/hide group representations based on switch
+  show-id            ; Display group IDs based on switch
+
   ask tortoises [
     ; If tortoise is not in a group
-    if in-group = false [
+    if (in-group = false) [
       move-tortoise    ; Execute the movement routine
       form-groups      ; Attempt to form groups with nearby tortoises
     ]
@@ -61,16 +64,11 @@ to go
 
   new-group          ; Create new groups formed in this tick
   update-groups      ; Update existing groups with new members
-  show-groups        ; Display/hide group representations based on switch
-  show-id            ; Display group IDs based on switch
+  move-group
 
-  ; Check if all tortoises have joined groups
-  ifelse all? tortoises [in-group] [
-    stop              ; If all tortoises are in groups, stop the simulation
-    export-plot "Number of tortoises in each group" "output.csv" ; Export data for analysis
-  ] [
-    tick              ; If not, increment the tick counter and continue
-  ]
+  ask tortoises [if (in-group = true)[maintain-tortoise-in-group]]
+
+  tick              ; If not, increment the tick counter and continue
 end
 
 
@@ -143,7 +141,7 @@ end
 
 ; Procedure for forming groups
 to form-groups
-  let others other tortoises in-radius 1.5 with [color = [color] of myself]
+  let others other tortoises in-radius 1 with [color = [color] of myself]
 
   if any? others [
     ifelse any? others with [group-id != -1] [
@@ -191,6 +189,52 @@ to new-group
   ]
   set new-groups []
 end
+
+
+to move-group
+    ask groups with [num-agents <= group-stability] [
+      let current-group-id id
+      let g self
+      let target min-one-of other groups in-cone vision-field 120 [distance myself]
+      if target != nobody [
+        face target               ; Turn towards the target group
+        forward 1                 ; Move forward by 1 unit
+        ; If color mismatch with target group and within close range
+        ifelse (group-color != [group-color] of target) and (distance target <= vision-field / 3) [
+          set heading heading + 45 + random 125  ; Turn randomly by 45 to 170 degrees
+          forward 1                 ; Move forward by 1 unit
+          ask tortoises with [group-id = current-group-id] [
+            set heading heading + 45 + random 125
+            forward 1
+          ]
+        ]
+        [if (distance target <= 1) [
+          let max-group-id max-one-of (turtle-set target self) [id]
+          let min-group-id min-one-of (turtle-set target self) [id]
+          ask min-group-id [
+            set tortoises-group (turtle-set tortoises-group [tortoises-group] of max-group-id)
+            ask tortoises-group [set group-id current-group-id]
+            update-groups
+          ]
+          ask max-group-id [
+            die
+          ]
+
+        ]]
+      ]
+    ]
+end
+
+to maintain-tortoise-in-group
+    let tortoise-now self
+    let group-of-the-tortoise one-of (groups with [id = [group-id] of tortoise-now])
+    if (group-of-the-tortoise != nobody)[
+    face group-of-the-tortoise
+    forward 1]
+end
+
+
+
 
 ; Procedure for updating existing groups
 to update-groups
@@ -330,7 +374,7 @@ number-of-tortoises
 number-of-tortoises
 0
 100
-44.0
+88.0
 1
 1
 NIL
@@ -354,7 +398,7 @@ SWITCH
 305
 show-group-id?
 show-group-id?
-1
+0
 1
 -1000
 
@@ -433,7 +477,7 @@ probability-of-generating-participant
 probability-of-generating-participant
 0
 1
-0.0
+0.2
 0.1
 1
 NIL
@@ -464,6 +508,21 @@ count tortoises with [personality = \"participant\"]
 17
 1
 11
+
+SLIDER
+207
+217
+379
+250
+group-stability
+group-stability
+0
+10
+3.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

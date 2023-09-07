@@ -1,166 +1,120 @@
-breed [tortoises tortoise]
-; Breed definition for individual agents that move and form groups
-
-tortoises-own [group-id time-of-joining in-group]
-; Specific attributes owned by each tortoise: group membership ID, the time it joined a group, and if the goal has been reached.
-
-breed [groups group]
-; Breed definition for collective agent representing groups
-
-groups-own [id tortoises-group num-agents num-agents-green num-agents-orange stable?]
-; Attributes owned by each group:
-; - id: ID of the group 0, 1, or 2.
-; - tortoises-group: collection of tortoises belonging to the group
-; - num-agents: number of tortoises in the group
-; - num-agents-green: number of green tortoises in the group
-; - num-agents-orange: number of orange tortoises in the group
-; - stable?: Has the group reached its objective for the moment?
-
-globals [tortoises-to-add-to-group group-ycors]
-; Global variables:
-; - next-group-id: represents the next available group ID to be assigned
-; - new-groups: a list that stores groups created when tortoises meet and form a new group
-; - tortoises-to-add-to-group: a list of tortoises that need to be added to an existing group
+turtles-own [
+  groupmates         ;; agentset of nearby turtles
+  nearest-neighbour
+  personality
+]
 
 to setup
   clear-all
+
+
+  ifelse(game = "Game 3")[
+    set vision-range 1 ; In game 3, it is as if agents can't see
+  ][
+    set vision-range 10 ; Predetermined vision range. Changeable.
+  ]
+
+  ifelse(game != "Game 1")[
+    set probability-of-generating-a-leader 0 ; If game is not 1, there are no leaders
+  ][
+    set probability-of-generating-a-leader 0.1] ; Predetermined probability. Changeable.
+
+
+  create-turtles population
+    [ set color one-of [green orange yellow]
+      set size 3
+      set shape "turtle"
+      setxy random-xcor random-ycor
+      set groupmates (turtle-set self no-turtles)
+      let k random-float 1
+      ifelse (k < probability-of-generating-a-leader) [set personality "leader"][set personality "participant"]
+  ]
+
   reset-ticks
-  set tortoises-to-add-to-group []
-  set group-ycors []
-
-  ; Create stationary initial group agents
-  ; Create a list of group id's
-  let lst []
-  let i 0
-  while [i < number-of-groups][set lst lput i lst set i i + 1]
-
-  ; Create each group
-  foreach lst[
-    [j] ->
-    create-groups 1
-    [
-      set shape "dot"
-      set size 8
-      let group-ycor round(80 / number-of-groups + j * 80 / number-of-groups)
-      setxy 0  group-ycor
-      set group-ycors lput group-ycor group-ycors
-      set id j
-      set tortoises-group nobody
-      set stable? false
-    ]
-  ]
-
-  ; Create each tortoise
-  let spacing (160 / (number-of-tortoises))
-  let start-xcor spacing
-
-  ; Create individual tortoise agents aligned with the groups
-  create-tortoises number-of-tortoises
-  [
-    set tortoises-to-add-to-group lput self tortoises-to-add-to-group
-    set shape "turtle"
-    set size 3
-    set color one-of [53 34]
-    set group-id one-of lst
-    set heading one-of [0 180]
-
-    setxy start-xcor round(80 / number-of-groups + group-id * 80 / number-of-groups)
-    set start-xcor (start-xcor + spacing)
-
-    add-to-group ; Add all tortoises in tortoises-to-add-to-group to the group agents based on their positions
-  ]
 end
 
 
 to go
+  if (Game = "Game 3") []
+
+  ask turtles [ search-groups]
+  ask turtles [center-group]
+  ask turtles [
+    let k random-float 1
+    if (personality = "leader" and k < 0.5) [call]]
+  ask turtles [update-groups]
+  ask turtles [ fd 1 ]
   tick
-
-  ; Groups in route to goal
-  expel-tortoises
-  ask groups [update-group]
-
-
-  ; Turtles in route to goal
-  move-tortoises
-  add-to-group
 end
 
-to add-to-group
-  ; Iterate through each tortoise to be added to a group
-  foreach tortoises-to-add-to-group
-  [
-    [element] ->
-    let element-id [group-id] of element   ; Get the group ID of the tortoise
-    ask groups with [id = element-id]
-    [
-      set tortoises-group (turtle-set element tortoises-group)   ; Add the tortoise to the group
-      update-group ; Update the agent counts (General, green and orange agents)
-    ]
-    ask element
-    [
-      set in-group true ; Turtle has reached the goal for the moment
-      set time-of-joining ticks
-    ]
+to search-groups
+  find-potential-groupmate
+  ifelse (nearest-neighbour != nobody)[go-to-neighbour][set-equal-heading]
+end
+
+
+to find-potential-groupmate
+  let my-groupmates groupmates
+  let same-colors other turtles in-radius vision-range with [color = [color] of myself and not member? self my-groupmates]
+  set nearest-neighbour min-one-of same-colors [distance center-of-group]
+end
+
+to go-to-neighbour
+  let target nearest-neighbour
+  face target
+  forward 1
+  if (distance target <= 5) [
+    set groupmates (turtle-set groupmates target)
   ]
-  set tortoises-to-add-to-group []   ; Clear the list of new groups for next tick
 end
 
-to move-tortoises
-  ask tortoises
-  [
-    ; If they have been expelled
-    if not in-group
-    [
-      ; Move until they are in another group coordinates
-      forward 1
-      set ycor round(ycor)
-      if member? ycor group-ycors
-      [
-        ; Join group
-        set group-id round(number-of-groups * ycor / 80 - 1)
-        set heading one-of [0 180]
-        set tortoises-to-add-to-group lput self tortoises-to-add-to-group
-      ]
+to center-group
+  if (distance center-of-group > 3) [
+    let angle towards center-of-group
+    set heading angle
+    forward 3
+  ]
+end
+
+to set-equal-heading
+  ifelse (other groupmates != no-turtles)[
+    let k [heading] of one-of groupmates
+    ask groupmates [set heading k + random 15 - random 15]]
+  [ifelse random-float 1.0 > 0.5 [
+      right random 15
+    ] [
+      left random 15
     ]
   ]
 end
 
-to expel-tortoises
-  ask groups
-  [ifelse (num-agents-green = num-agents-orange or num-agents = num-agents-orange or num-agents = num-agents-green)
-    ; If all turtles are green, or all turtles are orange or they are balanced, then the group is stable.
-    [set stable? true]
-    [set stable? false ; The group is not stable otherwise
-      ifelse (num-agents-green < num-agents-orange)
-    [
-      ; If the minority are orange tortoises, they are expelled.
-      ask tortoises-group with [color = 53] [set in-group false]
-      set tortoises-group tortoises-group with [color != 53]
-    ]
-    [
-      ; If the minority are orange tortoises, they are expelled.
-      ask tortoises-group with [color = 34] [set in-group false]
-      set tortoises-group tortoises-group with [color != 34]
-  ]]
+to-report center-of-group
+  ifelse (groupmates != no-turtles)[
+    let group-center-x mean [xcor] of groupmates
+    let group-center-y mean [ycor] of groupmates
+    report patch group-center-x  group-center-y]
+    [report patch xcor ycor]
+end
 
+to call
+  ask other turtles with [color = [color] of myself][
+    face myself forward 1
   ]
 end
 
-to update-group
-  ; Update counts
-  set num-agents ifelse-value (tortoises-group = nobody) [0] [count tortoises-group]
-  set num-agents-green ifelse-value (tortoises-group = nobody) [0] [count tortoises-group with [color = 53]]
-  set num-agents-orange ifelse-value (tortoises-group = nobody) [0] [count tortoises-group with [color = 34]]
+to update-groups
+  let my-groupmates [groupmates] of self
+  ask my-groupmates[set groupmates (turtle-set groupmates my-groupmates)]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-496
-38
-1189
-434
+386
+22
+800
+437
 -1
 -1
-4.26
+5.72
 1
 10
 1
@@ -170,21 +124,36 @@ GRAPHICS-WINDOW
 1
 1
 1
--80
-80
-0
-90
+-35
+35
+-35
+35
 1
 1
 1
 ticks
 30.0
 
+SLIDER
+53
+128
+225
+161
+population
+population
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-105
-39
-175
-75
+53
+32
+116
+65
 NIL
 setup
 NIL
@@ -198,10 +167,10 @@ NIL
 1
 
 BUTTON
-187
-39
-255
-75
+119
+32
+182
+65
 NIL
 go
 T
@@ -215,11 +184,11 @@ NIL
 1
 
 BUTTON
-265
-39
-335
-75
-step
+185
+32
+248
+65
+tick
 go
 NIL
 1
@@ -232,85 +201,41 @@ NIL
 1
 
 SLIDER
-106
-87
-278
-120
-number-of-tortoises
-number-of-tortoises
-0
-1000
-694.0
+54
+170
+226
+203
+vision-range
+vision-range
+1
+ifelse-value Game = "Game 3" [1] [50]
+1.0
 1
 1
 NIL
 HORIZONTAL
 
-PLOT
-42
-281
-214
-408
-# green-tortoises/group
-NIL
-NIL
-0.0
-10.0
-0.0
-20.0
-true
-false
-"" ""
-PENS
-"Green" 1.0 1 -12087248 true "" "histogram [group-id] of tortoises with [color = 53]"
-
-PLOT
-215
-281
-385
-408
-# orange-tortoises/group
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"Orange" 1.0 1 -8431303 true "" "histogram [group-id] of tortoises with [color = 34]"
-
-PLOT
-134
-136
-294
-264
-# tortoises/group
-NIL
-NIL
-0.0
-10.0
-0.0
-20.0
-true
-false
-"" ""
-PENS
-"default" 1.0 1 -16777216 true "" "histogram [group-id] of tortoises"
+CHOOSER
+53
+75
+191
+120
+Game
+Game
+"Game 1" "Game 2" "Game 3"
+2
 
 SLIDER
-290
-87
-462
-120
-number-of-groups
-number-of-groups
+54
+209
+295
+242
+probability-of-generating-a-leader
+probability-of-generating-a-leader
 0
-10
-9.0
-1
+ifelse-value Game != "Game 1" [0] [1]
+0.0
+0.1
 1
 NIL
 HORIZONTAL
